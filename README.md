@@ -10,15 +10,15 @@ pnpm install
 # Usage
   
 ```
-node kvtranslate [options] &lt;input file path&gt;  
+node kvtranslate [options] <input file path>  
   
-        -d &lt;output directory path&gt;  
+        -d <output directory path>  
            default: current directory  
   
-        -i &lt;input locale string&gt;  
+        -f <input locale string>  
            default: automatic detection from contents of source file, e.g., fr-FR 
   
-        -o &lt;output locale string&gt;  
+        -t <output locale string>  
            default: system locale, e.g., en-US 
 ```
   
@@ -28,8 +28,8 @@ Both of the following invocations will result in an output file of keyvalues\_es
 American English will be translated to the Spanish of Spain.
   
 ```
-node kvtranslate -d out -i en_US -o es_ES keyvalues.json
-node kvtranslate -d out -i en_US -o es_ES keyvalues_en_US.json
+node kvtranslate -d out -f en_US -t es_ES keyvalues.json
+node kvtranslate -d out -f en_US -t es_ES keyvalues_en_US.json
 ```
 
 # Contributors
