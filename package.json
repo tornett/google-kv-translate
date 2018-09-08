@@ -1,0 +1,25 @@
+{
+  "name": "google-kv-translate",
+  "version": "1.0.0",
+  "description": "Use Google API to batch translate strings in JSON key value file",
+  "main": "kvtranslate.js",
+  "scripts": {
+    "test": "pnpm run tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tornett/google-kv-translate.git"
+  },
+  "author": "Todd Ornett",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tornett/google-kv-translate/issues"
+  },
+  "homepage": "https://github.com/tornett/google-kv-translate#readme",
+  "dependencies": {
+    "@google-cloud/translate": "^2.1.1",
+    "minimist": "^1.2.0",
+    "os-locale": "^3.0.0",
+    "q": "^1.5.1"
+  }
+}
