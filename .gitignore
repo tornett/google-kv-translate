@@ -66,3 +66,4 @@ typings/
 # macOS Finder view
 .DS_Store
 
+out/
