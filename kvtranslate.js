@@ -16,8 +16,7 @@ const args = minimist(process.argv.slice(2), {
   default: {
     d: '.',
     f: null,
-    t: locale,
-    k: process.env.TRANSLATE_KEY
+    t: locale
   },
 })
 
