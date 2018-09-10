@@ -24,6 +24,7 @@ node kvtranslate [options] <input file path>
   
         -f <input locale string>  
            default: automatic detection from contents of source file, e.g., fr-FR 
+  
         -t <output locale string>  
            default: system locale, e.g., en-US 
 ```
@@ -37,8 +38,8 @@ This program supports it for future updates, such as distinguishing between
 American English and English in Great Britain.
   
 ```
-node kvtranslate -d out -f en\_US -t es\_ES keyvalues.json
-node kvtranslate -d out -f en\_US -t es\_ES keyvalues\_en\_US.json
+node kvtranslate -d out -f en_US -t es_ES keyvalues.json
+node kvtranslate -d out -f en_US -t es_ES keyvalues_en_US.json
 ```
 
 Sample keyvalues\_en\_US.json:
