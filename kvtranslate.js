@@ -77,7 +77,7 @@ function writeTranslations(locale, map, file, mutator = () => {}) {
 }
 
 function processMapGB(map, file) {
-  const enDict = require('./data/wordmap_enus_to_enuk.js').wordmap_enUS_to_enGB
+  const enDict = require(__dirname + '/data/wordmap_enus_to_enuk.js').wordmap_enUS_to_enGB
   const locale = getTargetLocale()
   writeTranslations(locale, map, file, (map, key) => {
     map[key] = map[key].replace(/\b\w+\b/g, w => { return enDict[w] || w })
