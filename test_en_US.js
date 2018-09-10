@@ -3,5 +3,6 @@ exports.en = {
   key2: `This is a
 multiline
 text
-string.`
+string.`,
+  key3: 'airplane'
 }

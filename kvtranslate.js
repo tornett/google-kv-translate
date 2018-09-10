@@ -1,8 +1,10 @@
 /**
- * Batch translate
- *
+ * Batch translate key-value pairs from JSON file
+ * using the Google Cloud Translation API.
+ * Since the Translation API does not support regions,
+ * that support is added with a local dictionary for
+ * Great Britain.
  */
-const enDict = require('./data/wordmap_enus_to_enuk.js').wordmap_enUS_to_enGB
 const fs = require('fs')
 const locale = require('os-locale').sync()
 const minimist = require('minimist')
@@ -22,7 +24,29 @@ const args = minimist(process.argv.slice(2), {
 
 args.d = args.d.replace(/[ \/]+$/, '')
 
-function writeTranslations(locale, map, mutator = () => {}) {
+function getTargetLocale() {
+  return args.t.replace(/[-_](..)$/, s => {
+    return s.toUpperCase()
+  })
+}
+
+function getTargetFilename(file) {
+  const targetLocale = getTargetLocale()
+  let targetFile = file
+  let sourceLocale = args.f
+
+  targetFile = targetFile.replace(sourceLocale, targetLocale)
+  sourceLocale = sourceLocale.replace('-', '_')
+  targetFile = targetFile.replace(sourceLocale, targetLocale)
+
+  if (/^(.(?!\.js$))+$/i.test(targetFile)) {
+    targetFile += '.js'
+  }
+
+  return targetFile
+}
+
+function writeTranslations(locale, map, file, mutator = () => {}) {
   let sep = '\''
   let data = 'exports.' + locale + ' = {' + os.EOL
   let objs = Object.entries(map)
@@ -44,21 +68,23 @@ function writeTranslations(locale, map, mutator = () => {}) {
     data += '  ' + key + ': ' + sep + map[key].replace(/'/g, '\\\'') + sep + ',' + os.EOL
   }
   let key = objs[objs.length - 1][0]
+  mutator(map, key)
   data += '  ' + key + ': \'' + map[key].replace(/'/g, '\\\'') + '\'' + os.EOL
   data += '}' + os.EOL
 
-  fs.writeFileSync(args.d + '/text_' + locale + '.js', data)
+  fs.writeFileSync(args.d + '/' + getTargetFilename(file), data)
   console.log('Translation ' + locale + ' completed.')
 }
 
-function writeAllTranslations() {
-  writeTranslations('jp', jp)
-  writeTranslations('en', en, (map, key) => {
+function processMapGB(map, file) {
+  const enDict = require('./data/wordmap_enus_to_enuk.js').wordmap_enUS_to_enGB
+  const locale = getTargetLocale()
+  writeTranslations(locale, map, file, (map, key) => {
     map[key] = map[key].replace(/\b\w+\b/g, w => { return enDict[w] || w })
   })
 }
 
-function processMap(map) {
+function processMapGoogleTranslate(map, file) {
   const promises = []
   const body = {
     target: args.t.replace(/[-_](..)$/, '').toLowerCase(),
@@ -67,6 +93,8 @@ function processMap(map) {
   if (args.f && args.f.length > 1) {
     body.source = args.f.replace(/[-_](..)$/, '').toLowerCase()
   }
+
+  // tweaks below for Japanese translation
   Object.entries(map).forEach(function (data) {
     body.q = data[1].replace(/[pP]lanner/g, 'plan')
     let promise = translate.translate(body.q, body.target).then(results => {
@@ -84,7 +112,17 @@ function processMap(map) {
     promises.push(promise)
   })
 
-  q.all(promises).then(() => { writeTranslations(body.target, map) })
+  q.all(promises).then(() => {
+    writeTranslations(body.target, map, file)
+  })
+}
+
+function processMap(map, file) {
+  if (/en[-_](gb|uk)$/i.test(args.t)) {
+    processMapGB(map, file)
+  } else {
+    processMapGoogleTranslate(map, file)
+  }
 }
 
 function processFiles() {
@@ -94,7 +132,7 @@ function processFiles() {
 
     let localeKey = require(file)
     for (let key in localeKey) {
-      processMap(localeKey[key])
+      processMap(localeKey[key], file)
     }
   }
 }

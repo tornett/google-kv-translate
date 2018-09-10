@@ -1,5 +1,9 @@
 # google-kv-translate
-Use Google Cloud Translation API to batch translate strings in JSON key value file.
+Use Google Cloud Translation API to batch translate strings in JSON key value file. Where the only difference is a regional difference, the Translation API will
+not help and so a local dictionary is used. At this time, only Great Britain is 
+supported for this mode through an appropriate -t locale such as en-GB. With
+-t en-GB, no network calls are made to Google and is therefore at no 
+transactional cost.
   
 # Setup
   
@@ -33,8 +37,21 @@ This program supports it for future updates, such as distinguishing between
 American English and English in Great Britain.
   
 ```
-node kvtranslate -d out -f en_US -t es_ES keyvalues.json
-node kvtranslate -d out -f en_US -t es_ES keyvalues_en_US.json
+node kvtranslate -d out -f en\_US -t es\_ES keyvalues.json
+node kvtranslate -d out -f en\_US -t es\_ES keyvalues\_en\_US.json
+```
+
+Sample keyvalues\_en\_US.json:
+
+```
+exports.en = {
+  key1: 'This is a test string',
+  key2: `This is a
+multiline
+text
+string.`,
+  key3: 'airplane'
+}
 ```
 
 # Contributors
